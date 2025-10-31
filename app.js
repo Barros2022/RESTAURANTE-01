@@ -1,39 +1,43 @@
-document.querySelectorAll(".choices").forEach(container => {
-  let options = [];
+let dados = {
+    atendimento: null,
+    espera: null,
+    limpeza: null,
+    experiencia: null,
+    retorno: null,
+    nps: null
+};
 
-  if (container.dataset.type === "scale5") options = ["1","2","3","4","5"];
-  if (container.dataset.type === "scale11") options = ["0","1","2","3","4","5","6","7","8","9","10"];
-  if (container.dataset.type === "options") options = JSON.parse(container.dataset.options);
+// captura de cliques (para todos os blocos)
+document.querySelectorAll(".rating, .experience, .return, .nps-scale").forEach(group => {
+    group.querySelectorAll("button").forEach(button => {
+        button.addEventListener("click", () => {
 
-  options.forEach(opt => {
-    const btn = document.createElement("div");
-    btn.className = "choice";
-    btn.textContent = opt;
+            group.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
+            button.classList.add("selected");
 
-    btn.onclick = () => {
-      container.querySelectorAll(".choice").forEach(c => c.classList.remove("selected"));
-      btn.classList.add("selected");
-      container.dataset.value = opt;
-    };
-    container.appendChild(btn);
-  });
+            const field = group.getAttribute("data-field");
+            dados[field] = button.innerText;
+        });
+    });
 });
 
+// envio do formulário
+document.getElementById("feedbackForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-document.querySelector("#feedback-form").onsubmit = async (e) => {
-  e.preventDefault();
+    console.log("🔍 Dados enviados:", dados);
 
-  const payload = {};
-  document.querySelectorAll(".choices").forEach(c => {
-    payload[c.dataset.name] = c.dataset.value || "";
-  });
-  payload.timestamp = new Date().toISOString();
+    try {
+        await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados)
+        });
 
-  await fetch(window.API_URL, {
-    method: "POST",
-    body: JSON.stringify(payload)
-  });
+        alert("✅ Avaliação enviada com sucesso!");
+        location.reload();
 
-  document.querySelector("#form-section").classList.add("hidden");
-  document.querySelector("#success-section").classList.remove("hidden");
-};
+    } catch (error) {
+        alert("❌ Erro ao enviar. Tente novamente.");
+    }
+});
