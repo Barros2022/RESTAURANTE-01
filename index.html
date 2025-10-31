@@ -1,64 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pesquisa de Satisfação</title>
-  <link rel="stylesheet" href="./styles.css" />
-  <script defer src="./config.js"></script>
-  <script defer src="./app.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pesquisa de Satisfação</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="page">
-    <header class="header">
-      <img id="logo" class="logo" alt="Logo do Restaurante" />
-      <div>
+
+    <div class="container">
+
         <h1>Pesquisa de Satisfação</h1>
-        <p class="subtitle">Sua opinião nos ajuda a melhorar</p>
-      </div>
-    </header>
+        <p>Sua opinião nos ajuda a melhorar</p>
 
-    <section id="form-section" class="card">
-      <form id="feedback-form">
-        <div class="field">
-          <label>De 1 a 5 como você avalia o atendimento recebido?</label>
-          <div class="choices" data-name="atendimento" data-type="scale5"></div>
-        </div>
+        <form id="feedbackForm">
 
-        <div class="field">
-          <label>De 1 a 5 como você avalia o tempo de espera?</label>
-          <div class="choices" data-name="tempo_espera" data-type="scale5"></div>
-        </div>
+            <!-- Atendimento -->
+            <label>De 1 a 5 como você avalia o atendimento recebido?</label>
+            <div class="rating" data-field="atendimento">
+                <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button>
+            </div>
 
-        <div class="field">
-          <label>De 1 a 5 como você avalia a limpeza do ambiente?</label>
-          <div class="choices" data-name="limpeza" data-type="scale5"></div>
-        </div>
+            <!-- Tempo de espera -->
+            <label>De 1 a 5 como você avalia o tempo de espera?</label>
+            <div class="rating" data-field="espera">
+                <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button>
+            </div>
 
-        <div class="field">
-          <label>Como você avalia sua experiência geral conosco?</label>
-          <div class="choices" data-name="experiencia_geral" data-type="options" data-options='["Excelente","Boa","Regular","Ruim","Péssima"]'></div>
-        </div>
+            <!-- Limpeza -->
+            <label>De 1 a 5 como você avalia a limpeza do ambiente?</label>
+            <div class="rating" data-field="limpeza">
+                <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button>
+            </div>
 
-        <div class="field">
-          <label>Você retornaria a este estabelecimento no futuro?</label>
-          <div class="choices" data-name="retornaria" data-type="options" data-options='["Sim","Talvez","Não"]'></div>
-        </div>
+            <!-- Experiência geral -->
+            <label>Como você avaliaria sua experiência geral conosco?</label>
+            <div class="experience" data-field="experiencia">
+                <button>Excelente</button><button>Boa</button><button>Regular</button><button>Ruim</button>
+            </div>
 
-        <div class="field">
-          <label>De 0 a 10, qual a chance de você recomendar este restaurante para um amigo ou familiar?</label>
-          <div class="choices" data-name="recomendar" data-type="scale11"></div>
-        </div>
+            <!-- Retornaria -->
+            <label>Você retornaria a este estabelecimento no futuro?</label>
+            <div class="return" data-field="retorno">
+                <button>Sim</button><button>Talvez</button><button>Não</button>
+            </div>
 
-        <button id="submit-btn" type="submit" class="btn">Enviar avaliação</button>
-      </form>
-    </section>
+            <!-- ✅ NOVO — PERGUNTA NPS -->
+            <label>De 0 a 10, qual a chance de você recomendar este restaurante para um amigo ou familiar?</label>
+            <div class="nps-scale" data-field="nps">
+                <button>0</button><button>1</button><button>2</button><button>3</button><button>4</button>
+                <button>5</button><button>6</button><button>7</button><button>8</button><button>9</button><button>10</button>
+            </div>
 
-    <section id="success-section" class="card success hidden">
-      <h2>✅ Obrigado!</h2>
-      <p>Seu feedback foi registrado com sucesso.</p>
-      <a id="back-link" href="#" class="btn secondary">Enviar outra resposta</a>
-    </section>
-  </main>
+            <button type="submit" id="btnEnviar">Enviar avaliação</button>
+
+        </form>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+
 </body>
 </html>
