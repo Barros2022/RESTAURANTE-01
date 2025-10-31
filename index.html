@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pesquisa de Satisfação</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="./config.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <img id="logo" class="logo" alt="Logo do Restaurante" />
+      <div>
+        <h1>Pesquisa de Satisfação</h1>
+        <p class="subtitle">Sua opinião nos ajuda a melhorar</p>
+      </div>
+    </header>
+
+    <section id="form-section" class="card">
+      <form id="feedback-form">
+        <div class="field">
+          <label>De 1 a 5 como você avalia o atendimento recebido?</label>
+          <div class="choices" data-name="atendimento" data-type="scale5"></div>
+        </div>
+
+        <div class="field">
+          <label>De 1 a 5 como você avalia o tempo de espera?</label>
+          <div class="choices" data-name="tempo_espera" data-type="scale5"></div>
+        </div>
+
+        <div class="field">
+          <label>De 1 a 5 como você avalia a limpeza do ambiente?</label>
+          <div class="choices" data-name="limpeza" data-type="scale5"></div>
+        </div>
+
+        <div class="field">
+          <label>Como você avalia sua experiência geral conosco?</label>
+          <div class="choices" data-name="experiencia_geral" data-type="options" data-options='["Excelente","Boa","Regular","Ruim","Péssima"]'></div>
+        </div>
+
+        <div class="field">
+          <label>Você retornaria a este estabelecimento no futuro?</label>
+          <div class="choices" data-name="retornaria" data-type="options" data-options='["Sim","Talvez","Não"]'></div>
+        </div>
+
+        <div class="field">
+          <label>De 0 a 10, qual a chance de você recomendar este restaurante para um amigo ou familiar?</label>
+          <div class="choices" data-name="recomendar" data-type="scale11"></div>
+        </div>
+
+        <button id="submit-btn" type="submit" class="btn">Enviar avaliação</button>
+      </form>
+    </section>
+
+    <section id="success-section" class="card success hidden">
+      <h2>✅ Obrigado!</h2>
+      <p>Seu feedback foi registrado com sucesso.</p>
+      <a id="back-link" href="#" class="btn secondary">Enviar outra resposta</a>
+    </section>
+  </main>
+</body>
+</html>
