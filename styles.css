@@ -1,0 +1,70 @@
+:root {
+  --brand: #00c46a;
+  --brand-hover: #00a85a;
+  --bg: #f5f5f5;
+  --text: #222;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  margin: 0;
+}
+
+.page {
+  max-width: 680px;
+  margin: auto;
+  padding: 24px;
+}
+
+.card {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ddd;
+}
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choice {
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  background: #eee;
+}
+
+.choice.selected {
+  background: var(--brand);
+  color: white;
+}
+
+.btn {
+  background: var(--brand);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--brand-hover);
+}
+
+.hidden { display: none; }
