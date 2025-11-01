@@ -7,9 +7,10 @@ let dados = {
     nps: null
 };
 
-// captura de cliques (para todos os blocos)
+// captura de cliques
 document.querySelectorAll(".rating, .experience, .return, .nps-scale").forEach(group => {
     group.querySelectorAll("button").forEach(button => {
+
         button.addEventListener("click", () => {
 
             group.querySelectorAll("button").forEach(b => b.classList.remove("selected"));
@@ -23,9 +24,7 @@ document.querySelectorAll(".rating, .experience, .return, .nps-scale").forEach(g
 
 // envio do formulário
 document.getElementById("feedbackForm").addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    console.log("🔍 Dados enviados:", dados);
+    event.preventDefault(); // evita refresh
 
     try {
         await fetch(API_URL, {
@@ -34,10 +33,10 @@ document.getElementById("feedbackForm").addEventListener("submit", async (event)
             body: JSON.stringify(dados)
         });
 
-        alert("✅ Avaliação enviada com sucesso!");
-        location.reload();
+        alert("✅ Avaliação enviada!");
+        document.getElementById("feedbackForm").reset();
 
-    } catch (error) {
-        alert("❌ Erro ao enviar. Tente novamente.");
+    } catch (err) {
+        alert("❌ Erro ao enviar os dados.");
     }
 });
