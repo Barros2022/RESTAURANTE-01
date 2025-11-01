@@ -79,3 +79,21 @@ label {
 #btnEnviar:hover {
     transform: scale(1.05);
 }
+.rating button,
+.experience button,
+.return button,
+.nps-scale button {
+    background: #EEF1F4;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 50px;
+    margin: 4px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button.selected {
+    background: #00C896 !important;
+    color: white !important;
+    transform: scale(1.12);
+}
