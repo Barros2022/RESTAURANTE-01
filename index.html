@@ -1,77 +1,384 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pesquisa de Satisfação</title>
-    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback do Restaurante</title>
+    <!-- Carrega o Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carrega a biblioteca de ícones Lucide -->
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide.min.js"></script>
+    <style>
+        /* Estilo customizado para o spinner de carregamento */
+        .loader {
+            border-top-color: #3498db;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* Classe para a estrela preenchida */
+        .star-filled {
+            color: #f59e0b; /* Amarelo-dourado (Tailwind's amber-500) */
+        }
+        /* Classe para a estrela vazia */
+        .star-empty {
+            color: #d1d5db; /* Cinza (Tailwind's gray-300) */
+        }
+        /* Estilos para botões de rádio customizados */
+        .radio-option {
+            transition: all 0.2s ease-in-out;
+        }
+        .radio-option input:checked + label {
+            background-color: #2563eb; /* bg-blue-600 */
+            color: white;
+            border-color: #2563eb; /* border-blue-600 */
+            transform: scale(1.05);
+        }
+        .radio-option input:focus + label {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* Anel de foco azul */
+        }
+        /* Estilos para botões NPS */
+        .nps-option {
+            transition: all 0.2s ease-in-out;
+        }
+        .nps-option input:checked + label {
+            background-color: #2563eb; /* bg-blue-600 */
+            color: white;
+            border-color: #2563eb; /* border-blue-600 */
+            transform: scale(1.1);
+        }
+        .nps-option input:focus + label {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* Anel de foco azul */
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans antialiased">
 
-    <div class="container">
-
-        <h1>Pesquisa de Satisfação</h1>
-        <p>Sua opinião nos ajuda a melhorar</p>
-
-        <form id="feedbackForm">
-
-            <!-- Atendimento -->
-            <label>De 1 a 5 como você avalia o atendimento recebido?</label>
-            <div class="rating" data-field="atendimento">
-                <button type="button">1</button><button type="button">2</button>
-                <button type="button">3</button><button type="button">4</button>
-                <button type="button">5</button>
+    <div class="container mx-auto p-4 py-8 flex items-center justify-center">
+        
+        <div id="feedback-card" class="bg-white w-full max-w-lg p-6 sm:p-8 rounded-2xl shadow-xl transition-all">
+            
+            <!-- Cabeçalho -->
+            <div class="text-center mb-8">
+                <div data-lucide="smile" class="mx-auto w-12 h-12 text-blue-600"></div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mt-2">Sua opinião é importante!</h1>
+                <p id="restaurant-name-display" class="text-gray-600 mt-1">Deixe seu feedback sobre sua experiência.</p>
             </div>
 
-            <!-- Tempo de espera -->
-            <label>De 1 a 5 como você avalia o tempo de espera?</label>
-            <div class="rating" data-field="espera">
-                <button type="button">1</button><button type="button">2</button>
-                <button type="button">3</button><button type="button">4</button>
-                <button type="button">5</button>
+            <!-- Mensagem de Erro de Link Inválido -->
+            <div id="invalid-link-error" class="hidden text-center p-4 bg-red-100 text-red-700 rounded-lg">
+                <div data-lucide="alert-triangle" class="mx-auto w-10 h-10 mb-2"></div>
+                <h2 class="font-bold text-lg">Link Inválido</h2>
+                <p class="text-sm">Este link de feedback não parece estar correto. Por favor, verifique o QR Code ou o link fornecido pelo restaurante.</p>
             </div>
 
-            <!-- Limpeza -->
-            <label>De 1 a 5 como você avalia a limpeza do ambiente?</label>
-            <div class="rating" data-field="limpeza">
-                <button type="button">1</button><button type="button">2</button>
-                <button type="button">3</button><button type="button">4</button>
-                <button type="button">5</button>
-            </div>
+            <!-- Formulário de Feedback -->
+            <form id="feedback-form" class="space-y-8">
+                
+                <!-- 4. Experiência Geral (Obrigatória) -->
+                <div>
+                    <label class="block text-lg font-semibold text-gray-700 mb-3">Como você avaliaria sua experiência geral conosco? <span class="text-red-500">*</span></label>
+                    <div id="experiencia-geral-group" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <!-- Opções de Rádio Customizadas -->
+                        <div class="radio-option">
+                            <input type="radio" id="exp-excelente" name="experiencia-geral" value="Excelente" class="sr-only" required>
+                            <label for="exp-excelente" class="block w-full text-center py-3 px-2 rounded-lg border-2 border-gray-300 cursor-pointer font-medium hover:border-blue-500">Excelente</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="exp-boa" name="experiencia-geral" value="Boa" class="sr-only">
+                            <label for="exp-boa" class="block w-full text-center py-3 px-2 rounded-lg border-2 border-gray-300 cursor-pointer font-medium hover:border-blue-500">Boa</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="exp-regular" name="experiencia-geral" value="Regular" class="sr-only">
+                            <label for="exp-regular" class="block w-full text-center py-3 px-2 rounded-lg border-2 border-gray-300 cursor-pointer font-medium hover:border-blue-500">Regular</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="exp-ruim" name="experiencia-geral" value="Ruim" class="sr-only">
+                            <label for="exp-ruim" class="block w-full text-center py-3 px-2 rounded-lg border-2 border-gray-300 cursor-pointer font-medium hover:border-blue-500">Ruim</label>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Experiência geral -->
-            <label>Como você avaliaria sua experiência geral conosco?</label>
-            <div class="experience" data-field="experiencia">
-                <button type="button">Excelente</button><button type="button">Boa</button>
-                <button type="button">Regular</button><button type="button">Ruim</button>
-            </div>
+                <!-- 1, 2, 3. Avaliações com Estrelas -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Atendimento</label>
+                        <div id="rating-atendimento" class="flex space-x-1 cursor-pointer text-2xl">
+                            <!-- Estrelas serão inseridas pelo JS -->
+                        </div>
+                        <input type="hidden" id="input-rating-atendimento" name="rating-atendimento" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tempo de Espera</label>
+                        <div id="rating-espera" class="flex space-x-1 cursor-pointer text-2xl">
+                            <!-- Estrelas serão inseridas pelo JS -->
+                        </div>
+                        <input type="hidden" id="input-rating-espera" name="rating-espera" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Limpeza do Ambiente</label>
+                        <div id="rating-limpeza" class="flex space-x-1 cursor-pointer text-2xl">
+                            <!-- Estrelas serão inseridas pelo JS -->
+                        </div>
+                        <input type="hidden" id="input-rating-limpeza" name="rating-limpeza" value="0">
+                    </div>
+                </div>
 
-            <!-- Retornaria -->
-            <label>Você retornaria a este estabelecimento no futuro?</label>
-            <div class="return" data-field="retorno">
-                <button type="button">Sim</button><button type="button">Talvez</button>
-                <button type="button">Não</button>
-            </div>
+                <!-- 5. Retornaria -->
+                <div>
+                    <label class="block text-base font-semibold text-gray-700 mb-3">Você retornaria a este estabelecimento no futuro?</label>
+                    <div class="flex flex-wrap gap-3">
+                        <div class="radio-option">
+                            <input type="radio" id="ret-sim" name="retornaria" value="Sim" class="sr-only">
+                            <label for="ret-sim" class="block py-2 px-5 rounded-lg border-2 border-gray-300 cursor-pointer font-medium hover:border-blue-500">Sim</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="ret-talvez" name="retornaria" value="Talvez" class="sr-only">
+                            <label for="ret-talvez" class="block py-2 px-5 rounded-lg border-2 border-gray-300 cursor-pointer font-medium hover:border-blue-500">Talvez</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="ret-nao" name="retornaria" value="Não" class="sr-only">
+                            <label for="ret-nao" class="block py-2 px-5 rounded-lg border-2 border-gray-300 cursor-pointer font-medium hover:border-blue-500">Não</label>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- NPS -->
-            <label>De 0 a 10, qual a chance de você recomendar este restaurante para um amigo ou familiar?</label>
-            <div class="nps-scale" data-field="nps">
-                <button type="button">0</button><button type="button">1</button>
-                <button type="button">2</button><button type="button">3</button>
-                <button type="button">4</button><button type="button">5</button>
-                <button type="button">6</button><button type="button">7</button>
-                <button type="button">8</button><button type="button">9</button>
-                <button type="button">10</button>
-            </div>
+                <!-- 6. NPS (0-10) -->
+                <div>
+                    <label class="block text-base font-semibold text-gray-700 mb-3">De 0 a 10, qual a chance de você recomendar este restaurante?</label>
+                    <div id="nps-group" class="flex flex-wrap gap-2 justify-center">
+                        <!-- NPS 0 a 10 -->
+                        <script>
+                            // Gera os 11 botões do NPS
+                            for (let i = 0; i <= 10; i++) {
+                                document.write(`
+                                    <div class="nps-option">
+                                        <input type="radio" id="nps-${i}" name="nps" value="${i}" class="sr-only">
+                                        <label for="nps-${i}" class="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-gray-300 cursor-pointer font-medium hover:border-blue-500 text-sm sm:text-base">${i}</label>
+                                    </div>
+                                `);
+                            }
+                        </script>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mt-1 px-1">
+                        <span>Pouco provável</span>
+                        <span>Muito provável</span>
+                    </div>
+                </div>
 
-            <!-- Botão de envio -->
-            <button type="submit" id="btnEnviar">Enviar avaliação</button>
+                <!-- Comentários -->
+                <div>
+                    <label for="comentario" class="block text-sm font-medium text-gray-700">Comentários (opcional)</label>
+                    <textarea id="comentario" name="comentario" rows="4" placeholder="Deixe mais detalhes sobre sua experiência..." class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-700 p-3"></textarea>
+                </div>
 
-        </form>
+                <!-- Contato (Opcional) -->
+                <div>
+                    <label for="contato" class="block text-sm font-medium text-gray-700">Seu contato (opcional)</label>
+                    <p class="text-xs text-gray-500 mb-1">Caso queira que o restaurante entre em contato.</p>
+                    <input type="text" id="contato" name="contato" placeholder="Seu nome, e-mail ou telefone" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-gray-700 p-3">
+                </div>
+
+                <!-- Botão de Envio -->
+                <div>
+                    <button type="submit" id="submit-button" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 transition-colors">
+                        <span id="submit-text">Enviar Feedback</span>
+                        <div id="submit-loader" class="loader w-6 h-6 rounded-full border-4 border-t-4 border-gray-200 ml-3 hidden"></div>
+                    </button>
+                </div>
+
+                <!-- Mensagem de Erro de Envio -->
+                <div id="submit-error" class="hidden text-center p-3 bg-red-100 text-red-700 rounded-lg">
+                    <p class="text-sm">Ocorreu um erro ao enviar. Tente novamente.</p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Card de Sucesso -->
+        <div id="success-card" class="hidden bg-white w-full max-w-md p-6 sm:p-10 rounded-2xl shadow-xl text-center transition-all">
+            <div data-lucide="check-check" class="mx-auto w-16 h-16 text-green-500"></div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mt-4">Obrigado!</h1>
+            <p class="text-gray-600 mt-2 text-lg">Seu feedback foi enviado com sucesso e ajuda muito a melhorar nossos serviços!</p>
+        </div>
+
     </div>
 
-    <script src="config.js"></script>
-    <script src="app.js"></script>
+    <script>
+        // ##################################################################
+        // ##               CONFIGURAÇÃO OBRIGATÓRIA                     ##
+        // ##################################################################
+        // ## Cole aqui a URL da sua Web App do Google Apps Script     ##
+        // ##################################################################
+        
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxVq9ZgyYUwJcMPfpZqyv2X8uU8oji_AOyls_pGG3PbKvEJSYoteeE_LZ4MbqreOr9zhA/exec';
 
+        // ##################################################################
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializa os ícones do Lucide
+            try {
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+            } catch (e) {
+                console.error("Erro ao inicializar ícones Lucide:", e);
+            }
+
+            const form = document.getElementById('feedback-form');
+            const submitButton = document.getElementById('submit-button');
+            const submitText = document.getElementById('submit-text');
+            const submitLoader = document.getElementById('submit-loader');
+            const submitError = document.getElementById('submit-error');
+            const feedbackCard = document.getElementById('feedback-card');
+            const successCard = document.getElementById('success-card');
+            const invalidLinkError = document.getElementById('invalid-link-error');
+            const restaurantNameDisplay = document.getElementById('restaurant-name-display');
+
+            // 1. Obter o ID do restaurante da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const restaurantId = urlParams.get('id');
+            const restaurantName = urlParams.get('name'); // Parâmetro opcional para nome
+
+            if (!restaurantId) {
+                // Se não tiver ID, mostra erro e esconde o formulário
+                form.classList.add('hidden');
+                invalidLinkError.classList.remove('hidden');
+                restaurantNameDisplay.classList.add('hidden');
+            } else if (restaurantName) {
+                // Se tiver nome, exibe
+                restaurantNameDisplay.textContent = `Deixe seu feedback para: ${restaurantName}`;
+            }
+
+            // 2. Lógica do Sistema de Estrelas
+            const ratingGroups = [
+                { id: 'rating-atendimento', input: 'input-rating-atendimento', size: 'text-2xl' },
+                { id: 'rating-espera', input: 'input-rating-espera', size: 'text-2xl' },
+                { id: 'rating-limpeza', input: 'input-rating-limpeza', size: 'text-2xl' }
+            ];
+
+            ratingGroups.forEach(group => {
+                const container = document.getElementById(group.id);
+                const input = document.getElementById(group.input);
+                if (!container || !input) return;
+
+                // Cria as 5 estrelas
+                for (let i = 1; i <= 5; i++) {
+                    const star = document.createElement('span');
+                    star.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star w-full h-full"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+                    star.className = `star-empty ${group.size}`;
+                    star.dataset.value = i;
+                    container.appendChild(star);
+                }
+
+                // Event Listener para o grupo
+                container.addEventListener('click', (e) => {
+                    const star = e.target.closest('span[data-value]');
+                    if (!star) return;
+
+                    const ratingValue = parseInt(star.dataset.value);
+                    input.value = ratingValue;
+
+                    // Atualiza a UI das estrelas
+                    updateStarDisplay(container, ratingValue);
+                });
+            });
+
+            function updateStarDisplay(container, value) {
+                const stars = container.querySelectorAll('span[data-value]');
+                stars.forEach(star => {
+                    if (parseInt(star.dataset.value) <= value) {
+                        star.classList.remove('star-empty');
+                        star.classList.add('star-filled');
+                    } else {
+                        star.classList.remove('star-filled');
+                        star.classList.add('star-empty');
+                    }
+                });
+            }
+
+            // 3. Habilitar botão de envio
+            // Inicia o botão de submit desabilitado
+            submitButton.disabled = true;
+            
+            // Adiciona listener ao grupo de experiência geral
+            const expGeralGroup = document.getElementById('experiencia-geral-group');
+            if(expGeralGroup) {
+                expGeralGroup.addEventListener('change', () => {
+                    submitButton.disabled = false;
+                });
+            }
+
+
+            // 4. Lógica de Envio do Formulário
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // Verifica se a URL é a de placeholder
+                if (APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxVq9ZgyYUwJcMPfpZqyv2X8uU8oji_AOyls_pGG3PbKvEJSYoteeE_LZ4MbqreOr9zhA/exec') {
+                    // Não use alert, mostre o erro na UI
+                    submitError.innerHTML = '<p class="text-sm">ERRO DE CONFIGURAÇÃO: A URL do Apps Script não foi definida no arquivo index.html.</p>';
+                    submitError.classList.remove('hidden');
+                    return;
+                }
+
+                // Desabilita botão e mostra loader
+                submitButton.disabled = true;
+                submitText.classList.add('hidden');
+                submitLoader.classList.remove('hidden');
+                submitError.classList.add('hidden');
+
+                // Coleta dados do formulário
+                const formData = new FormData(form);
+                const data = {
+                    restaurantId: restaurantId,
+                    experienciaGeral: formData.get('experiencia-geral') || '',
+                    ratingAtendimento: parseInt(formData.get('rating-atendimento')) || 0,
+                    ratingEspera: parseInt(formData.get('rating-espera')) || 0,
+                    ratingLimpeza: parseInt(formData.get('rating-limpeza')) || 0,
+                    retornaria: formData.get('retornaria') || '',
+                    nps: formData.get('nps') !== null ? parseInt(formData.get('nps')) : -1, // -1 indica não preenchido
+                    comentario: formData.get('comentario') || '',
+                    contato: formData.get('contato') || ''
+                };
+                
+                // Envia os dados para o Google Apps Script
+                try {
+                    const response = await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'cors',
+                        cache: 'no-cache',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        // Sucesso
+                        feedbackCard.classList.add('hidden');
+                        successCard.classList.remove('hidden');
+                    } else {
+                        // Erro retornado pelo script
+                        throw new Error(result.message || 'Erro desconhecido no servidor.');
+                    }
+
+                } catch (error) {
+                    console.error('Erro ao enviar feedback:', error);
+                    // Mostra erro na UI
+                    submitError.innerHTML = '<p class="text-sm">Ocorreu um erro ao enviar. Tente novamente mais tarde.</p>';
+                    submitError.classList.remove('hidden');
+                    // Reabilita o botão para nova tentativa
+                    submitButton.disabled = false;
+                    submitText.classList.remove('hidden');
+                    submitLoader.classList.add('hidden');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
